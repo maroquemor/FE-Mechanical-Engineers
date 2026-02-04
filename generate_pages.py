@@ -271,10 +271,37 @@ def generar_pagina_pregunta(numero):
             border-left-color: #2ecc71;
             background-color: #e8f8f1;
         }}
+        
+        .navigation-home {{
+            margin-bottom: 20px;
+        }}
+        
+        .back-home {{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }}
+        
+        .back-home:hover {{
+            background-color: #2980b9;
+        }}
     </style>
 </head>
 <body>
     <div class="question-container">
+        <div class="navigation-home">
+            <a href="../index.html#preguntas" class="back-home">
+                <i class="fas fa-arrow-left"></i> Volver al Listado de Preguntas
+            </a>
+        </div>
+        
         <div class="question-header">
             <h1>Pregunta {numero} - FE Mechanical</h1>
             <p>Explicación detallada paso a paso</p>
@@ -380,9 +407,9 @@ def generar_pagina_pregunta(numero):
         </div>
         
         <div class="nav-buttons">
-            {f'<a href="pregunta-{numero-1}.html" class="nav-button prev"><i class="fas fa-chevron-left"></i> Pregunta {numero-1}</a>' if numero > 1 else '<div></div>'}
+            {f'<a href="pregunta-{numero-1}.html" class="nav-button prev"><i class="fas fa-chevron-left"></i> Pregunta {numero-1}</a>' if numero > 6 else f'<a href="../Question_{numero-1}.html" class="nav-button prev"><i class="fas fa-chevron-left"></i> Pregunta {numero-1}</a>' if numero > 1 else '<div></div>'}
             
-            <a href="../index.html" class="nav-button"><i class="fas fa-home"></i> Volver al Inicio</a>
+            <a href="../index.html#preguntas" class="nav-button"><i class="fas fa-home"></i> Volver al Inicio</a>
             
             {f'<a href="pregunta-{numero+1}.html" class="nav-button">Pregunta {numero+1} <i class="fas fa-chevron-right"></i></a>' if numero < 100 else '<div></div>'}
         </div>
@@ -406,11 +433,19 @@ def generar_pagina_pregunta(numero):
             // Agregar funcionalidad de teclado para navegación
             document.addEventListener('keydown', function(e) {{
                 if (e.key === 'ArrowLeft' && {numero} > 1) {{
-                    window.location.href = 'pregunta-' + ({numero} - 1) + '.html';
+                    if ({numero} > 6) {{
+                        window.location.href = 'pregunta-' + ({numero} - 1) + '.html';
+                    }} else if ({numero} > 1) {{
+                        window.location.href = '../Question_' + ({numero} - 1) + '.html';
+                    }}
                 }} else if (e.key === 'ArrowRight' && {numero} < 100) {{
-                    window.location.href = 'pregunta-' + ({numero} + 1) + '.html';
+                    if ({numero} >= 6) {{
+                        window.location.href = 'pregunta-' + ({numero} + 1) + '.html';
+                    }} else {{
+                        window.location.href = '../Question_' + ({numero} + 1) + '.html';
+                    }}
                 }} else if (e.key === 'Escape') {{
-                    window.location.href = '../index.html';
+                    window.location.href = '../index.html#preguntas';
                 }}
             }});
             
@@ -438,11 +473,11 @@ def main():
         print("✗ Error: No se pudo crear la carpeta 'preguntas'")
         return
     
-    # 3. Generar las 99 páginas restantes
-    print(f"\n2. Generando páginas 2 a 100...")
+    # 3. Generar las páginas 7 a 100 (las 1-6 ya existen)
+    print(f"\n2. Generando páginas 7 a 100...")
     archivos_generados = 0
     
-    for i in range(2, 101):
+    for i in range(7, 101):
         # Generar el contenido HTML
         html_content = generar_pagina_pregunta(i)
         
@@ -466,10 +501,11 @@ def main():
     print(f"\n" + "=" * 60)
     print("RESUMEN DE LA GENERACIÓN")
     print("=" * 60)
-    print(f"✓ Páginas generadas: {archivos_generados}/99")
+    print(f"✓ Páginas generadas: {archivos_generados}/94 (7-100)")
+    print(f"✓ Páginas existentes: 6 (1-6)")
     print(f"✓ Total de preguntas: 100")
     print(f"✓ Carpeta principal: fe-mechanical-explanations/")
-    print(f"✓ Subcarpeta: preguntas/")
+    print(f"✓ Subcarpeta: preguntas/ (preguntas 7-100)")
     print(f"✓ Archivo índice: preguntas/indice.txt")
     print("\nSiguientes pasos para GitHub:")
     print("1. git add .")
@@ -490,7 +526,11 @@ def crear_indice_preguntas():
         for i in range(1, 101):
             tema_idx = (i - 1) % len(temas)
             tema = temas[tema_idx]
-            f.write(f"Pregunta {i:3d}: {tema:25} -> pregunta-{i}.html\n")
+            
+            if i <= 6:
+                f.write(f"Pregunta {i:3d}: {tema:25} -> ../Question_{i}.html\n")
+            else:
+                f.write(f"Pregunta {i:3d}: {tema:25} -> pregunta-{i}.html\n")
 
 if __name__ == "__main__":
     main()

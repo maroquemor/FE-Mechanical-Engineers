@@ -27,16 +27,26 @@ function generateQuestions() {
     
     // Generar las preguntas
     for (let i = 1; i <= totalQuestions; i++) {
-        // Seleccionar un tema aleatorio
-        const topic = topics[Math.floor(Math.random() * topics.length)];
+        // Seleccionar un tema basado en el número
+        const topic = topics[(i - 1) % topics.length];
         
         // Crear el elemento de la pregunta
         const questionCard = document.createElement('div');
         questionCard.className = 'question-card';
         
-        // Determinar si la página existe (solo la primera existe realmente)
-        const pageExists = i === 1;
-        const pageLink = pageExists ? `preguntas/pregunta-${i}.html` : '#';
+        // Determinar la ruta de la pregunta
+        let pageLink = '';
+        let pageExists = false;
+        
+        if (i <= 6) {
+            // Para las primeras 6 preguntas, usar archivos en raíz
+            pageLink = `Question_${i}.html`;
+            pageExists = true;
+        } else {
+            // Para preguntas 7-100, usar archivos en carpeta preguntas/
+            pageLink = `preguntas/pregunta-${i}.html`;
+            pageExists = true; // Asumir que serán generadas
+        }
         
         questionCard.innerHTML = `
             <div class="question-number">Pregunta ${i}</div>
@@ -45,7 +55,7 @@ function generateQuestions() {
                 <p>Explicación detallada de la pregunta ${i} del examen FE Mechanical, con solución paso a paso y conceptos clave.</p>
                 ${pageExists ? 
                     `<a href="${pageLink}" class="view-btn">Ver Explicación</a>` : 
-                    `<a href="#" class="view-btn" style="background-color:#95a5a6; cursor:not-allowed;">Próximamente</a>`
+                    `<span class="view-btn" style="background-color:#95a5a6; cursor:not-allowed;">Próximamente</span>`
                 }
             </div>
         `;
